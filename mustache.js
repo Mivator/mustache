@@ -3,8 +3,8 @@
  * http://github.com/janl/mustache.js
  */
 
-let objectToString = Object.prototype.toString;
-let isArray = Array.isArray || function isArrayPolyfill (object) {
+var objectToString = Object.prototype.toString;
+var isArray = Array.isArray || function isArrayPolyfill (object) {
   return objectToString.call(object) === '[object Array]';
 };
 
@@ -47,17 +47,17 @@ function primitiveHasOwnProperty (primitive, propName) {
 
 // Workaround for https://issues.apache.org/jira/browse/COUCHDB-577
 // See https://github.com/janl/mustache.js/issues/189
-let regExpTest = RegExp.prototype.test;
+var regExpTest = RegExp.prototype.test;
 function testRegExp (re, string) {
   return regExpTest.call(re, string);
 }
 
-let nonSpaceRe = /\S/;
+var nonSpaceRe = /\S/;
 function isWhitespace (string) {
   return !testRegExp(nonSpaceRe, string);
 }
 
-let entityMap = {
+var entityMap = {
   '&': '&amp;',
   '<': '&lt;',
   '>': '&gt;',
@@ -74,11 +74,11 @@ function escapeHtml (string) {
   });
 }
 
-let whiteRe = /\s*/;
-let spaceRe = /\s+/;
-let equalsRe = /\s*=/;
-let curlyRe = /\s*\}/;
-let tagRe = /#|\^|\/|>|\{|&|=|!/;
+var whiteRe = /\s*/;
+var spaceRe = /\s+/;
+var equalsRe = /\s*=/;
+var curlyRe = /\s*\}/;
+var tagRe = /#|\^|\/|>|\{|&|=|!/;
 
 /**
  * Breaks up the given `template` string into a tree of tokens. If the `tags`
@@ -109,14 +109,14 @@ let tagRe = /#|\^|\/|>|\{|&|=|!/;
 function parseTemplate (template, tags) {
   if (!template)
     return [];
-  let lineHasNonSpace = false;
-  let sections = [];     // Stack to hold section tokens
-  let tokens = [];       // Buffer to hold the tokens
-  let spaces = [];       // Indices of whitespace tokens on the current line
-  let hasTag = false;    // Is there a {{tag}} on the current line?
-  let nonSpace = false;  // Is there a non-space char on the current line?
-  let indentation = '';  // Tracks indentation for tags that use it
-  let tagIndex = 0;      // Stores a count of number of tags encountered on a line
+  var lineHasNonSpace = false;
+  var sections = [];     // Stack to hold section tokens
+  var tokens = [];       // Buffer to hold the tokens
+  var spaces = [];       // Indices of whitespace tokens on the current line
+  var hasTag = false;    // Is there a {{tag}} on the current line?
+  var nonSpace = false;  // Is there a non-space char on the current line?
+  var indentation = '';  // Tracks indentation for tags that use it
+  var tagIndex = 0;      // Stores a count of number of tags encountered on a line
 
   // Strips all whitespace tokens array for the current line
   // if there was a {{#tag}} on it and otherwise only space.
@@ -132,7 +132,7 @@ function parseTemplate (template, tags) {
     nonSpace = false;
   }
 
-  let openingTagRe, closingTagRe, closingCurlyRe;
+  var openingTagRe, closingTagRe, closingCurlyRe;
   function compileTags (tagsToCompile) {
     if (typeof tagsToCompile === 'string')
       tagsToCompile = tagsToCompile.split(spaceRe, 2);
@@ -147,9 +147,9 @@ function parseTemplate (template, tags) {
 
   compileTags(tags || mustache.tags);
 
-  let scanner = new Scanner(template);
+  var scanner = new Scanner(template);
 
-  let start, type, value, chr, token, openSection;
+  var start, type, value, chr, token, openSection;
   while (!scanner.eos()) {
     start = scanner.pos;
 
@@ -157,7 +157,7 @@ function parseTemplate (template, tags) {
     value = scanner.scanUntil(openingTagRe);
 
     if (value) {
-      for (let i = 0, valueLength = value.length; i < valueLength; ++i) {
+      for (var i = 0, valueLength = value.length; i < valueLength; ++i) {
         chr = value.charAt(i);
 
         if (isWhitespace(chr)) {
@@ -253,10 +253,10 @@ function parseTemplate (template, tags) {
  * to a single token.
  */
 function squashTokens (tokens) {
-  let squashedTokens = [];
+  var squashedTokens = [];
 
-  let token, lastToken;
-  for (let i = 0, numTokens = tokens.length; i < numTokens; ++i) {
+  var token, lastToken;
+  for (var i = 0, numTokens = tokens.length; i < numTokens; ++i) {
     token = tokens[i];
 
     if (token) {
@@ -280,12 +280,12 @@ function squashTokens (tokens) {
  * template that represents the end of that section.
  */
 function nestTokens (tokens) {
-  let nestedTokens = [];
-  let collector = nestedTokens;
-  let sections = [];
+  var nestedTokens = [];
+  var collector = nestedTokens;
+  var sections = [];
 
-  let token, section;
-  for (let i = 0, numTokens = tokens.length; i < numTokens; ++i) {
+  var token, section;
+  for (var i = 0, numTokens = tokens.length; i < numTokens; ++i) {
     token = tokens[i];
 
     switch (token[0]) {
@@ -330,12 +330,12 @@ Scanner.prototype.eos = function eos () {
  * Returns the matched text if it can match, the empty string otherwise.
  */
 Scanner.prototype.scan = function scan (re) {
-  let match = this.tail.match(re);
+  var match = this.tail.match(re);
 
   if (!match || match.index !== 0)
     return '';
 
-  const string = match[0];
+  var string = match[0];
 
   this.tail = this.tail.substring(string.length);
   this.pos += string.length;
@@ -348,8 +348,7 @@ Scanner.prototype.scan = function scan (re) {
  * the skipped string, which is the entire tail if no match can be made.
  */
 Scanner.prototype.scanUntil = function scanUntil (re) {
-  const index = this.tail.search(re)
-  let match;
+  var index = this.tail.search(re), match;
 
   switch (index) {
     case -1:
@@ -392,13 +391,13 @@ Context.prototype.push = function push (view) {
  * up the context hierarchy if the value is absent in this context's view.
  */
 Context.prototype.lookup = function lookup (name) {
-  const cache = this.cache;
+  var cache = this.cache;
 
-  let value;
+  var value;
   if (cache.hasOwnProperty(name)) {
     value = cache[name];
   } else {
-    let context = this, intermediateValue, names, index, lookupHit = false;
+    var context = this, intermediateValue, names, index, lookupHit = false;
 
     while (context) {
       if (name.indexOf('.') > 0) {
@@ -501,7 +500,6 @@ Writer.prototype.clearCache = function clearCache () {
   if (typeof this.templateCache !== 'undefined') {
     this.templateCache.clear();
   }
-  return;
 };
 
 /**
@@ -510,10 +508,10 @@ Writer.prototype.clearCache = function clearCache () {
  * that is generated from the parse.
  */
 Writer.prototype.parse = function parse (template, tags) {
-  const cache = this.templateCache;
-  const cacheKey = template + ':' + (tags || mustache.tags).join(':');
-  const isCacheEnabled = typeof cache !== 'undefined';
-  let tokens = isCacheEnabled ? cache.get(cacheKey) : undefined;
+  var cache = this.templateCache;
+  var cacheKey = template + ':' + (tags || mustache.tags).join(':');
+  var isCacheEnabled = typeof cache !== 'undefined';
+  var tokens = isCacheEnabled ? cache.get(cacheKey) : undefined;
 
   if (tokens == undefined) {
     tokens = parseTemplate(template, tags);
@@ -546,9 +544,9 @@ Writer.prototype.parse = function parse (template, tags) {
  * escaping function is used as the default.
  */
 Writer.prototype.render = function render (template, view, partials, config) {
-  const tags = this.getConfigTags(config);
-  const tokens = this.parse(template, tags);
-  const context = (view instanceof Context) ? view : new Context(view, undefined);
+  var tags = this.getConfigTags(config);
+  var tokens = this.parse(template, tags);
+  var context = (view instanceof Context) ? view : new Context(view, undefined);
   return this.renderTokens(tokens, context, partials, template, config);
 };
 
@@ -562,25 +560,10 @@ Writer.prototype.render = function render (template, view, partials, config) {
  * be omitted.
  */
 Writer.prototype.renderTokens = function renderTokens (tokens, context, partials, originalTemplate, config) {
-  let buffer = "";
-  for (let i = 0, numTokens = tokens.length; i < numTokens; ++i) {
-    const value = this.unescapedValue(tokens[i], context);
-    if (value !== undefined) buffer += value;
-  }
-  return buffer;
-};
+  var buffer = '';
 
-// FORK-CHANGE: I changed all "var" to "let" and "const" the way they are required or not
-
-// FORK-CHANGE : at mivator we don#t need any special var symbols, therefore no checks are required, we can also get rid of the other render functions
-// That's why renderTokens is adjusted
-
-/*
-Writer.prototype.renderTokens = function renderTokens (tokens, context, partials, originalTemplate, config) {
-  let buffer = '';
-
-  let token, symbol, value;
-  for (let i = 0, numTokens = tokens.length; i < numTokens; ++i) {
+  var token, symbol, value;
+  for (var i = 0, numTokens = tokens.length; i < numTokens; ++i) {
     value = undefined;
     token = tokens[i];
     symbol = token[0];
@@ -600,9 +583,9 @@ Writer.prototype.renderTokens = function renderTokens (tokens, context, partials
 };
 
 Writer.prototype.renderSection = function renderSection (token, context, partials, originalTemplate, config) {
-  let self = this;
-  let buffer = '';
-  let value = context.lookup(token[1]);
+  var self = this;
+  var buffer = '';
+  var value = context.lookup(token[1]);
 
   // This function is used to render an arbitrary template
   // in the current context by higher-order sections.
@@ -613,7 +596,7 @@ Writer.prototype.renderSection = function renderSection (token, context, partial
   if (!value) return;
 
   if (isArray(value)) {
-    for (let j = 0, valueLength = value.length; j < valueLength; ++j) {
+    for (var j = 0, valueLength = value.length; j < valueLength; ++j) {
       buffer += this.renderTokens(token[4], context.push(value[j]), partials, originalTemplate, config);
     }
   } else if (typeof value === 'object' || typeof value === 'string' || typeof value === 'number') {
@@ -634,7 +617,7 @@ Writer.prototype.renderSection = function renderSection (token, context, partial
 };
 
 Writer.prototype.renderInverted = function renderInverted (token, context, partials, originalTemplate, config) {
-  let value = context.lookup(token[1]);
+  var value = context.lookup(token[1]);
 
   // Use JavaScript's definition of falsy. Include empty arrays.
   // See https://github.com/janl/mustache.js/issues/186
@@ -643,9 +626,9 @@ Writer.prototype.renderInverted = function renderInverted (token, context, parti
 };
 
 Writer.prototype.indentPartial = function indentPartial (partial, indentation, lineHasNonSpace) {
-  let filteredIndentation = indentation.replace(/[^ \t]/g, '');
-  let partialByNl = partial.split('\n');
-  for (let i = 0; i < partialByNl.length; i++) {
+  var filteredIndentation = indentation.replace(/[^ \t]/g, '');
+  var partialByNl = partial.split('\n');
+  for (var i = 0; i < partialByNl.length; i++) {
     if (partialByNl[i].length && (i > 0 || !lineHasNonSpace)) {
       partialByNl[i] = filteredIndentation + partialByNl[i];
     }
@@ -655,25 +638,31 @@ Writer.prototype.indentPartial = function indentPartial (partial, indentation, l
 
 Writer.prototype.renderPartial = function renderPartial (token, context, partials, config) {
   if (!partials) return;
-  let tags = this.getConfigTags(config);
+  var tags = this.getConfigTags(config);
 
-  let value = isFunction(partials) ? partials(token[1]) : partials[token[1]];
+  var value = isFunction(partials) ? partials(token[1]) : partials[token[1]];
   if (value != null) {
-    let lineHasNonSpace = token[6];
-    let tagIndex = token[5];
-    let indentation = token[4];
-    let indentedValue = value;
+    var lineHasNonSpace = token[6];
+    var tagIndex = token[5];
+    var indentation = token[4];
+    var indentedValue = value;
     if (tagIndex == 0 && indentation) {
       indentedValue = this.indentPartial(value, indentation, lineHasNonSpace);
     }
-    let tokens = this.parse(indentedValue, tags);
+    var tokens = this.parse(indentedValue, tags);
     return this.renderTokens(tokens, context, partials, indentedValue, config);
   }
 };
 
+Writer.prototype.unescapedValue = function unescapedValue (token, context) {
+  var value = context.lookup(token[1]);
+  if (value != null)
+    return value;
+};
+
 Writer.prototype.escapedValue = function escapedValue (token, context, config) {
-  let escape = this.getConfigEscape(config) || mustache.escape;
-  let value = context.lookup(token[1]);
+  var escape = this.getConfigEscape(config) || mustache.escape;
+  var value = context.lookup(token[1]);
   if (value != null)
     return (typeof value === 'number' && escape === mustache.escape) ? String(value) : escape(value);
 };
@@ -681,15 +670,6 @@ Writer.prototype.escapedValue = function escapedValue (token, context, config) {
 Writer.prototype.rawValue = function rawValue (token) {
   return token[1];
 };
-
-*/
-
-// FORK-CHANGE : Changed the way of void return to undefined if null
-Writer.prototype.unescapedValue = function unescapedValue (token, context) {
-  const value = context.lookup(token[1]);
-  return value != null ? value : undefined;
-};
-
 
 Writer.prototype.getConfigTags = function getConfigTags (config) {
   if (isArray(config)) {
@@ -712,11 +692,10 @@ Writer.prototype.getConfigEscape = function getConfigEscape (config) {
   }
 };
 
-
-let mustache = {
+var mustache = {
   name: 'mustache.js',
-  version: '4.2.1-fork-mivator',
-  tags: [ '{', '}' ],
+  version: '4.2.0',
+  tags: [ '{{', '}}' ],
   clearCache: undefined,
   escape: undefined,
   parse: undefined,
@@ -741,7 +720,7 @@ let mustache = {
 };
 
 // All high-level mustache.* functions use this writer.
-let defaultWriter = new Writer();
+var defaultWriter = new Writer();
 
 /**
  * Clears all cached templates in the default writer.
