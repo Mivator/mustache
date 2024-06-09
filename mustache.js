@@ -581,7 +581,6 @@
         // case "name": value = this.escapedValue(token, context, config); break;
         case "text": value = this.rawValue(token); break;
       }
-      console.log("DEBUG", symbol, value)
       if (value !== undefined) buffer += value;
     }
 
