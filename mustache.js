@@ -285,11 +285,8 @@
    * template that represents the end of that section.
    */
   function nestTokens (tokens) {
-    const nestedTokens = [];
-    const collector = nestedTokens;
-    const sections = [];
-
-    let token, section;
+    const nestedTokens = [], sections = [];
+    let collector = nestedTokens, token, section;
     for (let i = 0, numTokens = tokens.length; i < numTokens; ++i) {
       token = tokens[i];
 
@@ -649,10 +646,8 @@
 
     const value = isFunction(partials) ? partials(token[1]) : partials[token[1]];
     if (value != null) {
-      const lineHasNonSpace = token[6];
-      const tagIndex = token[5];
-      const indentation = token[4];
-      const indentedValue = value;
+      const lineHasNonSpace = token[6], tagIndex = token[5], indentation = token[4];
+      let indentedValue = value;
       if (tagIndex == 0 && indentation) {
         indentedValue = this.indentPartial(value, indentation, lineHasNonSpace);
       }
